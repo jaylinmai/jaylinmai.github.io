@@ -1,0 +1,59 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <regex>
+
+using namespace std;
+
+void processFile(const string& inputFile, const string& outputFile) {
+    ifstream infile(inputFile);
+    ofstream outfile(outputFile);
+
+    string line;
+    while (getline(infile, line)) {
+        // Remove comments starting with "//"
+        size_t comment = line.find("//"); // this finds that '//' and call it comment
+        if (comment != string::npos) {
+            line = line.substr(0, comment);
+        }
+
+        // Trim leading and trailing whitespace
+        //line = regex_replace(line, regex("^\\s+|\\s+$"), "");
+
+        line.erase(0, line.find_first("\t"));
+        line.erase(line.find_last("\t")+1);
+
+        // Skip empty lines
+        if (line.empty()) {
+            continue;
+        }
+
+        // Ensure only one space between lexemes
+        //line = regex_replace(line, regex("\\s+"), " ");
+        istringstream space(line);
+        string word; 
+        bool firstWord = true; 
+        while(space > word){
+            if(!firstWord){
+                outfile << " "; //this will add a single space
+            }
+            outfile << word; 
+            firstWord = false; 
+        }
+
+        outfile << line << endl;
+    }
+
+    infile.close();
+    outfile.close();
+    cout << "Processing complete. The output is saved in " << outputFilePath << endl;
+}
+
+int main() {
+    string inputFilePath = "infile.txt";   // Input file
+    string outputFilePath = "outfile.txt"; // Output file
+
+    processFile(inputFilePath, outputFilePath);
+
+    return 0;
+}
