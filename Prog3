@@ -1,0 +1,107 @@
+#include <iostream>
+#include <sstream>
+#include <cctype>
+#include <cstring>
+
+using namespace std;
+
+//creating arrays for reseved words, opertators and special symbols
+const char  reservedWords[4][10]={ “cin>>”, “for”, “int”, “while”};
+
+const char operator[6][2]={ “+”, “-”, “*”, “/”, “++”, “--”}
+
+const char special[7][3]={“>”, “=” , “;” , “(“ , “)” , “>=” ,“,”};
+
+string LowerCase(const string &str) { // this will convert a string to lowercase 
+    string result = str; 
+    for (char &c : result) {
+        c = lower(c); 
+    }
+    return result; 
+}
+//checking if there reserved words 
+bool isReservedWord(const string &lexeme){
+    for (const auto &word : reservedWords) {
+        if (LowerCase(lexeme) == word) {
+            return true; 
+        }
+    }
+    return false; 
+}
+
+//checking if there is an operator 
+bool isOperator(const string &lexeme){
+    for (const auto &op : opertators) {
+        if (lexeme == op) {
+            return true; 
+        }
+    }
+    return false; 
+}
+//checking if the string is a symbol
+bool isSymbol(const string &lexeme){
+    for (const auto &sym : symbol) {
+        if (lexeme == sym) {
+            return true; 
+        }
+    }
+    return false; 
+}
+//checking if the string is a number 
+bool isNumber (const string &lexeme){
+    int start = 0; 
+    if (lexeme[start] == '-' || lexeme[start] == '+'){
+        start = 1; 
+    }
+    for (int i= start, i < lexeme.length(); i++) {
+        if (!isdigit(lexeme[i])){
+            return false;
+        }
+    }
+    return !lexeme.empty() && (start < lexeme.length());
+}
+//checking if the string is an identifier
+bool isIdentifier(const string &lexeme) {
+    if(!isstart(lexeme[0])&& lexeme[0] != '_'){
+        return false;
+    }
+    for (char c : lexeme) {
+        is (!isalnum(c) && c != '_') {
+            return false;
+        }
+    }
+    return !isReservedWord(lexeme);
+}
+
+
+int main() {
+    string inputLine; 
+    char Option; 
+
+    do {
+        cout << "Enter a statement: ";
+        getline(cin, inputLine);
+        stringstream a(inputLine); 
+        string lexeme; 
+
+        while(a >> lexeme) {
+            if (isReservedWord(lexeme)){
+                cout << lexeme << "reserved word" << endl; 
+            } else if (isOperator(lexeme)){
+                cout << lexeme << " operator" << endl; 
+            } else if (isSymbol(lexeme)) {
+                cout << lexeme << "speical symbol" << endl; 
+            } else if (isNumber(lexeme)) {
+                cout << lexeme << " number " << endl; 
+            } else if (isIdentifier(lexeme)) {
+                cout << lexeme << " identifier " << endl;
+            } else {
+                cout << lexeme << " invalid " << endl; 
+            }
+        }
+        cout << "COMTINUE (Y/N)"; 
+        cin >> Option; 
+        cin.ignore(); 
+    } while(lower(Option) == 'y');
+    return 0; 
+}
